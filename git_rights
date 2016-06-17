@@ -1,0 +1,39 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Developped by Hamza ESSAYEGH (Querdos) © 2016
+ *
+ * Changes rights for all modified files in a git repository
+ *
+ * When developping website, it happens that you have authorizations
+ * problems and you don't want to bother yourself and you make a simple
+ * `chmod 777 -R ./`.
+ *
+ * The problem is that git will consider all files modified, even if
+ * it's only about rights.
+ *
+ * This script is here to help you change that by changing all files rights
+ */
+
+// Permission
+$permission = '644';
+
+// Retrieving git status
+exec('git status --porcelain', $output);
+
+// Pattern for modified files
+$pattern1 = '/\sM\s(.*)/';
+
+// Pattern for new files
+$pattern2 = '/\sN\s(.*)/';
+
+// For each file, applying 644 rights
+foreach($output as $row) {
+    if (1 == preg_match($pattern1, $row, $match)) {
+        exec(sprintf(
+            'sudo chmod %s %s', 
+            $permission,
+            $match[1]
+        ));
+    }
+}
